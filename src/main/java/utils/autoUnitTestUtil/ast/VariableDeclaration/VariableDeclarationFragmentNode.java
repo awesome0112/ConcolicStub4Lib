@@ -2,7 +2,7 @@ package utils.autoUnitTestUtil.ast.VariableDeclaration;
 
 import utils.autoUnitTestUtil.ast.Expression.ExpressionNode;
 import utils.autoUnitTestUtil.ast.Type.AnnotatableType.PrimitiveTypeNode;
-import utils.autoUnitTestUtil.dataStructure.MemoryModel;
+import utils.autoUnitTestUtil.symbolicExecution.MemoryModel;
 import org.eclipse.jdt.core.dom.*;
 
 public class VariableDeclarationFragmentNode extends VariableDeclarationNode {
@@ -16,10 +16,10 @@ public class VariableDeclarationFragmentNode extends VariableDeclarationNode {
         if(initializer != null) {
             if(baseType instanceof PrimitiveType) {
                 PrimitiveType type = (PrimitiveType) baseType;
-                memoryModel.declarePrimitiveTypeVariable(type.getPrimitiveTypeCode(), name, ExpressionNode.executeExpression(initializer, memoryModel));
+                memoryModel.declarePrimitiveTypeVariable(type, name, ExpressionNode.executeExpression(initializer, memoryModel));
             } else if(baseType instanceof ArrayType) {
                 ArrayType type = (ArrayType) baseType;
-                memoryModel.declareArrayTypeVariable(type, name, ExpressionNode.executeExpression(initializer, memoryModel));
+                memoryModel.declareArrayTypeVariable(type, name, type.getDimensions(), ExpressionNode.executeExpression(initializer, memoryModel));
             } else {
                 throw new RuntimeException(baseType.getClass() + " is invalid!!");
             }
@@ -27,10 +27,17 @@ public class VariableDeclarationFragmentNode extends VariableDeclarationNode {
         } else {
             if(baseType instanceof PrimitiveType) {
                 PrimitiveType type = (PrimitiveType) baseType;
-                memoryModel.declarePrimitiveTypeVariable(type.getPrimitiveTypeCode(), name, PrimitiveTypeNode.changePrimitiveTypeToLiteralInitialization(type));
+                memoryModel.declarePrimitiveTypeVariable(type, name, PrimitiveTypeNode.changePrimitiveTypeToLiteralInitialization(type));
             } else {
                 throw new RuntimeException("Only deal with PrimitiveType!!");
             }
+        }
+    }
+
+    public static void replaceMethodInvocationWithStub(VariableDeclarationFragment originVariableDeclarationFragment,  MethodInvocation originMethodInvocation, ASTNode replacement) {
+        Expression initializer = originVariableDeclarationFragment.getInitializer();
+        if (initializer == originMethodInvocation) {
+            originVariableDeclarationFragment.setInitializer((Expression) replacement);
         }
     }
 

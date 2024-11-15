@@ -1,7 +1,7 @@
 package utils.autoUnitTestUtil.ast.Expression.Name;
 
 import utils.autoUnitTestUtil.ast.Expression.ExpressionNode;
-import utils.autoUnitTestUtil.dataStructure.MemoryModel;
+import utils.autoUnitTestUtil.symbolicExecution.MemoryModel;
 import org.eclipse.jdt.core.dom.SimpleName;
 
 public class SimpleNameNode extends NameNode {

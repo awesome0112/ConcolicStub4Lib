@@ -1,6 +1,6 @@
 package utils.autoUnitTestUtil.cfg;
 
-import utils.autoUnitTestUtil.parser.ASTHelper;
+import utils.autoUnitTestUtil.cfg.utils.ASTHelper;
 import utils.autoUnitTestUtil.utils.Utils;
 import org.eclipse.jdt.core.dom.*;
 
@@ -20,6 +20,7 @@ public class CfgNode
     private boolean isFalseNode = false; //Nut false cua cau lenh dieu kien
     private String content = "";
     private boolean isMarked = false;
+    private boolean isFakeMarked = false;
     private ASTNode ast;
     private CfgNode parent;
     private List<CfgNode> children = new ArrayList<>();
@@ -76,7 +77,9 @@ public class CfgNode
 
     public String getContent()
     {
-        return content;
+        if (ast != null)
+            return ast.toString();
+        else return content;
     }
 
     public String getContentReport()
@@ -116,46 +119,6 @@ public class CfgNode
     public void setIsFalseNode(boolean falseNode) {
         isFalseNode = falseNode;
     }
-
-//    public static CfgNode parseToCFG(SFunctionNode functionNode)
-//    {
-//        ASTNode astNode = functionNode.getAst().getAstNode();
-//        CfgNode cfgNode = new CfgStartNode(astNode);
-//        ASTHelper.generateCFGTreeFromASTNode(astNode, cfgNode);
-//        return cfgNode;
-//    }
-
-    public static CfgNode parserToCFG(String sourceCode)
-    {
-        CfgNode cfg = new CfgNode();
-
-        ASTParser parser = ASTParser.newParser(AST.JLS8);
-        parser.setSource(sourceCode.toCharArray());
-        parser.setKind(ASTParser.K_COMPILATION_UNIT);
-        CompilationUnit cu = (CompilationUnit) parser.createAST(null);
-        ASTVisitor visitor = new ASTVisitor()
-        {
-            @Override
-            public boolean visit(TypeDeclaration node)
-            {
-
-                List<ASTNode> children = Utils.getChildren(node);
-
-                for (ASTNode func : children)
-                {
-
-                }
-
-                ASTHelper.generateCFGTreeFromASTNode(node, cfg);
-                return true;
-            }
-        };
-
-        cu.accept(visitor);
-
-        return cfg;
-    }
-
 
     public static ArrayList<ASTNode> parserToAstFuncList(String sourceCodeFile)
     {
@@ -311,5 +274,13 @@ public class CfgNode
 
     public void setMarked(boolean marked) {
         isMarked = marked;
+    }
+
+    public boolean isFakeMarked() {
+        return isFakeMarked;
+    }
+
+    public void setFakeMarked(boolean fakeMarked) {
+        isFakeMarked = fakeMarked;
     }
 }

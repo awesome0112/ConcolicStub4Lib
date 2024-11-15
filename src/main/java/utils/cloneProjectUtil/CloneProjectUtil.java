@@ -12,9 +12,12 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 public final class CloneProjectUtil {
 
@@ -27,24 +30,38 @@ public final class CloneProjectUtil {
     }
     private static StringBuilder command;
 
-    public static String getJavaDirPath(String originDir) {
-        File dir = new File(originDir);
+    public static Path findRootPackage(Path sourceDir) throws IOException {
+        List<Path> files = Files.list(sourceDir).collect(Collectors.toList());
+        Optional<Path> javaFile = files.stream().filter(file -> file.getFileName().toString().endsWith(".java"))
+                .findAny();
 
-        if (!dir.isDirectory()) {
-            throw new RuntimeException("Invalid Dir");
+        if (javaFile.isPresent()) {
+            Path file = javaFile.get();
+            List<String> lines = Files.readAllLines(file);
+            Optional<String> packageLine = lines.stream()
+                    .filter(line -> line.startsWith("package "))
+                    .findFirst();
+            if (packageLine.isPresent()) {
+                String packageName = packageLine.get().substring(8, packageLine.get().indexOf(";")).trim().replace(".", "\\");
+//                Path packageRoot = sourceDir;
+//                for (String part : packageName.split("\\.")) {
+//                    packageRoot = packageRoot.resolve(part);
+//                }
+                String oldPath = sourceDir.toString();
+                String newPath = oldPath.substring(0, oldPath.indexOf(packageName) - 1);
+                return Paths.get(newPath);
+            }
+            return file.getParent();
         }
-        for(File file : Objects.requireNonNull(dir.listFiles())) {
-            if(file.isDirectory()) {
-                if(file.getName().equals("java")) {
-                    return file.getPath();
-                }
-                else {
-                    String dirPath = getJavaDirPath(file.getPath());
-                    if(dirPath.endsWith("java")) return dirPath;
+        for (Path file : files) {
+            if (Files.isDirectory(file)) {
+                Path path = findRootPackage(file);
+                if (path != null) {
+                    return path;
                 }
             }
         }
-        return "";
+        return null;
     }
 
     public static Folder cloneProject(String originalDirPath, String destinationDirPath) throws IOException, InterruptedException {
@@ -107,13 +124,6 @@ public final class CloneProjectUtil {
     }
 
     public static void deleteFilesInDirectory(String directoryPath) throws IOException {
-//        File[] files = getFilesInDirectory(directoryPath);
-//        for (File file : files) {
-//            if (file.isDirectory()) {
-//                deleteFilesInDirectory(file.getPath());
-//            }
-//            file.delete();
-//        }
         if(Files.exists(Path.of(directoryPath))) {
             FileUtils.cleanDirectory(new File(directoryPath));
         } else {

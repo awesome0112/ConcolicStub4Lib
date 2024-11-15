@@ -15,25 +15,28 @@ public class ChooseToolController {
     private Stage stage;
     private Scene scene;
     private Parent root;
+    public static boolean allowHandleStubForLib;
 
     @FXML
-    void chooseConcolicToolButtonClicked(MouseEvent event) throws IOException {
-        root = FXMLLoader.load(getClass().getResource("/fxml/ConcolicAUTScene.fxml"));
-        stage = (Stage)((Node)event.getSource()).getScene().getWindow();
-        scene = new Scene(root);
-        stage.setResizable(false);
-        stage.setTitle("Concolic-AUT");
-        stage.setScene(scene);
-        stage.show();
-    }
-
-    @FXML
-    void chooseNTDToolButtonClicked(MouseEvent event) throws IOException {
+    void chooseConcolicWithStubButtonClicked(MouseEvent event) throws IOException {
+        allowHandleStubForLib = false;
         root = FXMLLoader.load(getClass().getResource("/fxml/ConcolicWithStubScene.fxml"));
         stage = (Stage)((Node)event.getSource()).getScene().getWindow();
         scene = new Scene(root);
         stage.setResizable(false);
         stage.setTitle("ConcolicWithStub");
+        stage.setScene(scene);
+        stage.show();
+    }
+
+    @FXML
+    void chooseConcolicStub4LibButtonClicked(MouseEvent event) throws IOException {
+        allowHandleStubForLib = true;
+        root = FXMLLoader.load(getClass().getResource("/fxml/ConcolicStub4LibScene.fxml"));
+        stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+        scene = new Scene(root);
+        stage.setResizable(false);
+        stage.setTitle("ConcolicStub4Lib");
         stage.setScene(scene);
         stage.show();
     }

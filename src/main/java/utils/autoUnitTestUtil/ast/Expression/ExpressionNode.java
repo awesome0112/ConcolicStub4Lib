@@ -4,7 +4,7 @@ import utils.autoUnitTestUtil.ast.*;
 import utils.autoUnitTestUtil.ast.Expression.Literal.*;
 import utils.autoUnitTestUtil.ast.Expression.Name.NameNode;
 import utils.autoUnitTestUtil.ast.Expression.OperationExpression.*;
-import utils.autoUnitTestUtil.dataStructure.MemoryModel;
+import utils.autoUnitTestUtil.symbolicExecution.MemoryModel;
 import org.eclipse.jdt.core.dom.*;
 
 public abstract class ExpressionNode extends AstNode {
@@ -13,7 +13,7 @@ public abstract class ExpressionNode extends AstNode {
         if (isOperationExpression(expression)) {
             return OperationExpressionNode.executeOperationExpression(expression, memoryModel);
         } else if (isLiteral(expression)) {
-            return LiteralNode.executeLiteral(expression, memoryModel);
+            return LiteralNode.executeLiteral(expression);
         } else if (expression instanceof ArrayInitializer) {
             return ArrayInitializerNode.executeArrayInitializer((ArrayInitializer) expression, memoryModel);
         } else if (expression instanceof ArrayCreation) {
@@ -29,6 +29,8 @@ public abstract class ExpressionNode extends AstNode {
             VariableDeclarationExpressionNode.executeVariableDeclarationExpression((VariableDeclarationExpression) expression,
                     memoryModel);
             return null;
+        } else if (expression instanceof MethodInvocation) {
+            return MethodInvocationNode.executeMethodInvocation((MethodInvocation) expression, memoryModel);
         } else {
 //            throw new RuntimeException(expression.getClass() + " is not an Expression!!!");
             return null;
@@ -54,6 +56,16 @@ public abstract class ExpressionNode extends AstNode {
                 (expression instanceof PostfixExpression) ||
                 (expression instanceof PrefixExpression) ||
                 (expression instanceof ParenthesizedExpression);
+    }
+
+    public static void replaceMethodInvocationWithStub(Expression originExpression, MethodInvocation originMethodInvocation, ASTNode replacement) {
+        if (isOperationExpression(originExpression)) {
+            OperationExpressionNode.replaceMethodInvocationWithStub(originExpression, originMethodInvocation, replacement);
+        } else if (originExpression instanceof Assignment) {
+            AssignmentNode.replaceMethodInvocationWithStub((Assignment) originExpression, originMethodInvocation, replacement);
+        } else if (originExpression instanceof VariableDeclarationExpression) {
+            VariableDeclarationExpressionNode.replaceMethodInvocationWithStub((VariableDeclarationExpression) originExpression, originMethodInvocation, replacement);
+        }
     }
 
 }

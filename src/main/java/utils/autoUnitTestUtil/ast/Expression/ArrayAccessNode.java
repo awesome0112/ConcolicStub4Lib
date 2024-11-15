@@ -3,7 +3,7 @@ package utils.autoUnitTestUtil.ast.Expression;
 import utils.autoUnitTestUtil.ast.AstNode;
 import utils.autoUnitTestUtil.ast.Expression.Literal.LiteralNode;
 import utils.autoUnitTestUtil.ast.Expression.Name.NameNode;
-import utils.autoUnitTestUtil.dataStructure.MemoryModel;
+import utils.autoUnitTestUtil.symbolicExecution.MemoryModel;
 import org.eclipse.jdt.core.dom.ArrayAccess;
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.Name;

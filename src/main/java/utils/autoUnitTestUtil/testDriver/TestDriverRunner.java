@@ -1,7 +1,7 @@
 package utils.autoUnitTestUtil.testDriver;
 
 import utils.FilePath;
-import utils.autoUnitTestUtil.dataStructure.MarkedStatement;
+import utils.autoUnitTestUtil.path.MarkedStatement;
 
 import java.io.BufferedReader;
 import java.io.FileReader;

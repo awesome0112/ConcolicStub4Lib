@@ -19,19 +19,22 @@ import javafx.scene.paint.Paint;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import utils.FilePath;
-import utils.autoUnitTestUtil.autoTesting.NTDTesting;
-import utils.autoUnitTestUtil.concolicResult.ConcolicParameterData;
-import utils.autoUnitTestUtil.concolicResult.ConcolicTestData;
-import utils.autoUnitTestUtil.concolicResult.ConcolicTestResult;
+import utils.autoUnitTestUtil.testGeneration.ConcolicTestingWithStub;
+import utils.autoUnitTestUtil.testGeneration.TestGeneration;
+import utils.autoUnitTestUtil.testResult.ParameterData;
+import utils.autoUnitTestUtil.testResult.TestData;
+import utils.autoUnitTestUtil.testResult.TestResult;
 import utils.cloneProjectUtil.CloneProjectUtil;
 import utils.cloneProjectUtil.projectTreeObjects.Folder;
 import utils.cloneProjectUtil.projectTreeObjects.JavaFile;
 import utils.cloneProjectUtil.projectTreeObjects.ProjectTreeObject;
 import utils.cloneProjectUtil.projectTreeObjects.Unit;
-import utils.uploadUtil.NTDUploadUtil;
+import utils.uploadUtil.ConcolicUploadUtil;
 
 import java.io.File;
 import java.net.URL;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -40,12 +43,7 @@ public class ConcolicWithStubController implements Initializable {
     private FileChooser fileChooser = new FileChooser();
     private File choseFile;
     private Unit choseUnit;
-    private Coverage choseCoverage;
-
-    public enum Coverage {
-        STATEMENT,
-        BRANCH
-    }
+    private TestGeneration.Coverage choseCoverage;
 
     @FXML
     private Label filePreview;
@@ -63,7 +61,7 @@ public class ConcolicWithStubController implements Initializable {
     private ChoiceBox<String> coverageChoiceBox;
 
     @FXML
-    private ListView<ConcolicTestData> testCaseListView;
+    private ListView<TestData> testCaseListView;
 
     @FXML
     private VBox testCaseDetailVBox;
@@ -75,7 +73,7 @@ public class ConcolicWithStubController implements Initializable {
     private Label sourceCodeCoverageLabel;
 
     @FXML
-    private ListView<ConcolicParameterData> generatedTestDataListView;
+    private ListView<ParameterData> generatedTestDataListView;
 
     @FXML
     private Label outputLabel;
@@ -113,10 +111,10 @@ public class ConcolicWithStubController implements Initializable {
         testingTimeLabel.setDisable(true);
         usedMemoryLabel.setDisable(true);
 
-        testCaseListView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<ConcolicTestData>() {
+        testCaseListView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<TestData>() {
             @Override
-            public void changed(ObservableValue<? extends ConcolicTestData> observableValue, ConcolicTestData concolicTestData, ConcolicTestData t1) {
-                ConcolicTestData testData = testCaseListView.getSelectionModel().getSelectedItem();
+            public void changed(ObservableValue<? extends TestData> observableValue, TestData concolicTestData, TestData t1) {
+                TestData testData = testCaseListView.getSelectionModel().getSelectedItem();
                 if (testData != null) {
                     setTestCaseDetail(testData);
                     testCaseDetailVBox.setDisable(false);
@@ -141,12 +139,12 @@ public class ConcolicWithStubController implements Initializable {
             long startTime = System.nanoTime();
 
             CloneProjectUtil.deleteFilesInDirectory(FilePath.uploadedProjectPath);
-            NTDUploadUtil.javaUnzipFile(choseFile.getPath(), FilePath.uploadedProjectPath);
+            ConcolicUploadUtil.javaUnzipFile(choseFile.getPath(), FilePath.uploadedProjectPath);
 
-            String javaDirPath = CloneProjectUtil.getJavaDirPath(FilePath.uploadedProjectPath);
-            if (javaDirPath.equals("")) throw new RuntimeException("Invalid project");
+            Path rootPackage = CloneProjectUtil.findRootPackage(Paths.get(FilePath.uploadedProjectPath));
+            if (rootPackage == null) throw new RuntimeException("Invalid project");
 
-            Folder folder = CloneProjectUtil.cloneProject(javaDirPath, FilePath.clonedProjectPath);
+            Folder folder = ConcolicUploadUtil.createProjectTree(rootPackage.toString());
 
             long endTime = System.nanoTime();
             double duration = (endTime - startTime) / 1000000.0;
@@ -241,9 +239,9 @@ public class ConcolicWithStubController implements Initializable {
 
         String coverage = coverageChoiceBox.getValue();
         if (coverage.equals("Statement coverage")) {
-            choseCoverage = Coverage.STATEMENT;
+            choseCoverage = TestGeneration.Coverage.STATEMENT;
         } else if (coverage.equals("Branch coverage")) {
-            choseCoverage = Coverage.BRANCH;
+            choseCoverage = TestGeneration.Coverage.BRANCH;
         } else if (coverage.equals("")) {
             // do nothing!
         } else {
@@ -257,10 +255,11 @@ public class ConcolicWithStubController implements Initializable {
         resetGeneratedTestCasesInfo();
         alertLabel.setText("");
 
-        ConcolicTestResult result;
+        TestResult result;
         try {
-            result = NTDTesting.runFullConcolic(choseUnit.getPath(), choseUnit.getMethodName(), choseUnit.getClassName(), choseCoverage);
+            result = ConcolicTestingWithStub.runFullConcolic(choseUnit.getPath(), choseUnit.getMethodName(), choseUnit.getClassName(), choseCoverage);
         } catch (Exception e) {
+            e.printStackTrace();
             alertLabel.setTextFill(Paint.valueOf("red"));
             alertLabel.setText("Examined unit contains cases we haven't handle yet!");
             return;
@@ -279,7 +278,7 @@ public class ConcolicWithStubController implements Initializable {
         testCaseListView.getItems().addAll(result.getFullTestData());
     }
 
-    private void setTestCaseDetail(ConcolicTestData testData) {
+    private void setTestCaseDetail(TestData testData) {
         testCaseIDLabel.setText("   Test case ID: " + testData.getTestCaseID());
         sourceCodeCoverageLabel.setText("   Source code coverage: " + testData.getSourceCodeCoverage());
         requireCoverageLabel.setText("   Required coverage: " + testData.getRequiredCoverage());

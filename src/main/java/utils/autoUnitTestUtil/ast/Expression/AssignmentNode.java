@@ -6,7 +6,7 @@ import utils.autoUnitTestUtil.ast.Expression.Literal.LiteralNode;
 import utils.autoUnitTestUtil.ast.Expression.Literal.NumberLiteral.IntegerLiteralNode;
 import utils.autoUnitTestUtil.ast.Expression.Name.NameNode;
 import utils.autoUnitTestUtil.ast.Expression.OperationExpression.InfixExpressionNode;
-import utils.autoUnitTestUtil.dataStructure.MemoryModel;
+import utils.autoUnitTestUtil.symbolicExecution.MemoryModel;
 import org.eclipse.jdt.core.dom.*;
 
 public class AssignmentNode extends ExpressionNode {
@@ -90,5 +90,10 @@ public class AssignmentNode extends ExpressionNode {
         } else {
             return assignValue;
         }
+    }
+
+    public static void replaceMethodInvocationWithStub(Assignment originAssignment, MethodInvocation originMethodInvocation, ASTNode replacement) {
+        if (originAssignment.getRightHandSide() == originMethodInvocation)
+            originAssignment.setRightHandSide((Expression) replacement);
     }
 }

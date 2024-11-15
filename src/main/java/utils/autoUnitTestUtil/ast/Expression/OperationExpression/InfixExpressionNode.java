@@ -2,12 +2,15 @@ package utils.autoUnitTestUtil.ast.Expression.OperationExpression;
 
 import com.microsoft.z3.Context;
 import com.microsoft.z3.Expr;
+import utils.autoUnitTestUtil.Z3Vars.Z3VariableWrapper;
 import utils.autoUnitTestUtil.ast.*;
 import utils.autoUnitTestUtil.ast.Expression.ExpressionNode;
 import utils.autoUnitTestUtil.ast.Expression.Literal.LiteralNode;
-import utils.autoUnitTestUtil.dataStructure.MemoryModel;
+import utils.autoUnitTestUtil.symbolicExecution.MemoryModel;
 import org.eclipse.jdt.core.dom.ASTNode;
+import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.InfixExpression;
+import org.eclipse.jdt.core.dom.MethodInvocation;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +22,24 @@ public class InfixExpressionNode extends OperationExpressionNode {
     private InfixExpression.Operator operator;
     private List<AstNode> extendedOperands;
 
-    public static Expr createZ3Expression(InfixExpressionNode infixExpressionNode, Context ctx, List<Expr> vars, MemoryModel memoryModel) {
+    public static void replaceMethodInvocationWithStub(InfixExpression originInfixExpression, MethodInvocation originMethodInvocation, ASTNode replacement) {
+        Expression leftOperand = originInfixExpression.getLeftOperand();
+        Expression rightOperand = originInfixExpression.getRightOperand();
+        List<ASTNode> extendedOperands = originInfixExpression.extendedOperands();
+        if (leftOperand == originMethodInvocation)
+            originInfixExpression.setLeftOperand((Expression) replacement);
+        else if (rightOperand == originMethodInvocation) {
+            originInfixExpression.setRightOperand((Expression) replacement);
+        } else {
+            for (int i = 0; i < extendedOperands.size(); i++){
+                if (extendedOperands.get(i) == originMethodInvocation){
+                    extendedOperands.set(i, replacement);
+                }
+            }
+        }
+    }
+
+    public static Expr createZ3Expression(InfixExpressionNode infixExpressionNode, Context ctx, List<Z3VariableWrapper> vars, MemoryModel memoryModel) {
         ExpressionNode leftOperand = infixExpressionNode.leftOperand;
         ExpressionNode rightOperand = infixExpressionNode.rightOperand;
         InfixExpression.Operator operator = infixExpressionNode.operator;

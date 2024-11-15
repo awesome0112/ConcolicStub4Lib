@@ -2,11 +2,15 @@ package utils.autoUnitTestUtil.ast.Expression.OperationExpression;
 
 import com.microsoft.z3.Context;
 import com.microsoft.z3.Expr;
+import utils.autoUnitTestUtil.Z3Vars.Z3VariableWrapper;
 import utils.autoUnitTestUtil.ast.AstNode;
 import utils.autoUnitTestUtil.ast.Expression.ExpressionNode;
 import utils.autoUnitTestUtil.ast.Expression.Literal.LiteralNode;
 import utils.autoUnitTestUtil.ast.Expression.Name.NameNode;
-import utils.autoUnitTestUtil.dataStructure.MemoryModel;
+import utils.autoUnitTestUtil.symbolicExecution.MemoryModel;
+import org.eclipse.jdt.core.dom.ASTNode;
+import org.eclipse.jdt.core.dom.Expression;
+import org.eclipse.jdt.core.dom.MethodInvocation;
 import org.eclipse.jdt.core.dom.PostfixExpression;
 
 import java.util.List;
@@ -15,7 +19,13 @@ public class PostfixExpressionNode extends OperationExpressionNode {
     private ExpressionNode operand;
     private PostfixExpression.Operator operator;
 
-    public static Expr createZ3Expression(PostfixExpressionNode postfixExpressionNode, Context ctx, List<Expr> vars, MemoryModel memoryModel) {
+    public static void replaceMethodInvocationWithStub(PostfixExpression originPostfixExpression, MethodInvocation originMethodInvocation, ASTNode replacement) {
+        Expression operand = originPostfixExpression.getOperand();
+        if (operand == originMethodInvocation)
+            originPostfixExpression.setOperand((Expression) replacement);
+    }
+
+    public static Expr createZ3Expression(PostfixExpressionNode postfixExpressionNode, Context ctx, List<Z3VariableWrapper> vars, MemoryModel memoryModel) {
         ExpressionNode operand = postfixExpressionNode.operand;
         PostfixExpression.Operator operator = postfixExpressionNode.operator;
 

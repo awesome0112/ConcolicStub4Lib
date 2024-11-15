@@ -1,7 +1,7 @@
 package utils.autoUnitTestUtil.ast.Expression;
 
 import utils.autoUnitTestUtil.ast.AstNode;
-import utils.autoUnitTestUtil.dataStructure.MemoryModel;
+import utils.autoUnitTestUtil.symbolicExecution.MemoryModel;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ArrayInitializer;
 

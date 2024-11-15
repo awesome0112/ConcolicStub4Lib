@@ -1,17 +1,16 @@
 package utils.autoUnitTestUtil.ast.Expression.Literal;
 
-import utils.autoUnitTestUtil.ast.AstNode;
 import utils.autoUnitTestUtil.ast.Expression.ExpressionNode;
 import utils.autoUnitTestUtil.ast.Expression.Literal.NumberLiteral.DoubleLiteralNode;
 import utils.autoUnitTestUtil.ast.Expression.Literal.NumberLiteral.IntegerLiteralNode;
 import utils.autoUnitTestUtil.ast.Expression.Literal.NumberLiteral.NumberLiteralNode;
 import utils.autoUnitTestUtil.ast.Expression.OperationExpression.InfixExpressionNode;
 import utils.autoUnitTestUtil.ast.Expression.OperationExpression.PrefixExpressionNode;
-import utils.autoUnitTestUtil.dataStructure.MemoryModel;
 import org.eclipse.jdt.core.dom.*;
 
 public abstract class LiteralNode extends ExpressionNode {
-    public static AstNode executeLiteral(Expression expression, MemoryModel memoryModel) {
+
+    public static LiteralNode executeLiteral(Expression expression) {
         if (expression instanceof NumberLiteral) {
             return NumberLiteralNode.executeNumberLiteral((NumberLiteral) expression);
         } else if (expression instanceof CharacterLiteral) {
@@ -522,5 +521,24 @@ public abstract class LiteralNode extends ExpressionNode {
                 astNode instanceof BooleanLiteral ||
                 astNode instanceof NullLiteral ||
                 astNode instanceof TypeLiteral);
+    }
+
+    public static Class<?> getLiteralClass(ASTNode literal) {
+        if (literal instanceof NumberLiteral) {
+            NumberLiteral numberLiteral = (NumberLiteral) literal;
+            if (NumberLiteralNode.isIntegerValue(numberLiteral.getToken())) {
+                return int.class;
+            } else {
+                return double.class;
+            }
+        } else if (literal instanceof CharacterLiteral) {
+            return char.class;
+        } else if (literal instanceof BooleanLiteral) {
+            return boolean.class;
+        } else if (literal instanceof StringLiteral) {
+            return String.class;
+        } else {
+            throw new RuntimeException("Unsupported Literal: " + literal.getClass());
+        }
     }
 }

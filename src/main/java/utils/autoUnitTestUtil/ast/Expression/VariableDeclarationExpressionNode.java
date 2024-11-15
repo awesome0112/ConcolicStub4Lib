@@ -2,11 +2,8 @@ package utils.autoUnitTestUtil.ast.Expression;
 
 import utils.autoUnitTestUtil.ast.AstNode;
 import utils.autoUnitTestUtil.ast.VariableDeclaration.VariableDeclarationFragmentNode;
-import utils.autoUnitTestUtil.dataStructure.MemoryModel;
-import org.eclipse.jdt.core.dom.ASTNode;
-import org.eclipse.jdt.core.dom.Type;
-import org.eclipse.jdt.core.dom.VariableDeclarationExpression;
-import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
+import utils.autoUnitTestUtil.symbolicExecution.MemoryModel;
+import org.eclipse.jdt.core.dom.*;
 
 import java.util.List;
 
@@ -21,5 +18,12 @@ public class VariableDeclarationExpressionNode extends ExpressionNode {
         for(VariableDeclarationFragment fragment : fragments) {
             VariableDeclarationFragmentNode.executeVariableDeclarationFragment(fragment, variableDeclarationExpression.getType(), memoryModel);
         }
+    }
+
+    public static void replaceMethodInvocationWithStub(VariableDeclarationExpression originVariableDeclarationExpression, MethodInvocation originMethodInvocation, ASTNode replacement) {
+//        List<VariableDeclarationFragment> fragments = originVariableDeclarationExpression.fragments();
+//        for(VariableDeclarationFragment fragment : fragments) {
+//            VariableDeclarationFragmentNode.replaceMethodInvocationWithStub(fragment, originMethodInvocation, replacement);
+//        }
     }
 }

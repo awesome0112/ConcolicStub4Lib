@@ -5,7 +5,7 @@ import utils.autoUnitTestUtil.ast.Expression.Literal.LiteralNode;
 import utils.autoUnitTestUtil.ast.Expression.Name.NameNode;
 import utils.autoUnitTestUtil.ast.Type.AnnotatableType.PrimitiveTypeNode;
 import utils.autoUnitTestUtil.ast.Type.ArrayTypeNode;
-import utils.autoUnitTestUtil.dataStructure.MemoryModel;
+import utils.autoUnitTestUtil.symbolicExecution.MemoryModel;
 import org.eclipse.jdt.core.dom.*;
 
 import java.util.List;
