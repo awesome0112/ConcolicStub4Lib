@@ -28,6 +28,7 @@ public class MemoryModel { // ONLY FOR PRIMITIVE TYPES!!!!
     }
 
     public void declarePrimitiveTypeVariable(PrimitiveType primitiveType, String name, AstNode element) {
+
         S.put(new PrimitiveTypeVariable(primitiveType, name), element);
     }
 

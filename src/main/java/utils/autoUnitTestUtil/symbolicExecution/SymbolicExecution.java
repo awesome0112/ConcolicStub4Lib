@@ -92,6 +92,7 @@ public final class SymbolicExecution {
     }
 
     private void executeParameters(Context ctx) {
+        Z3Vars = new ArrayList<>();
         for (ASTNode astNode : parameters) {
             AstNode.executeASTNode(astNode, memoryModel);
             createZ3ParameterVariable(astNode, ctx);

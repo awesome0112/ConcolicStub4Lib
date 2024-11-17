@@ -87,14 +87,24 @@ public final class TestDriverGenerator {
         result.append(writeDataToFileUtility);
 
         // Generate testing method with instruments
-        List<MethodInvocation> methodInvocations = new ArrayList<>();
-        result.append(createCloneMethod(method, coverage, methodInvocations));
+        result.append(createCloneMethod(method, coverage));
+
         // Generate MethodDeclaration form MethodInvocation
+        result.append(generateAllMethodDeclarationFromMethodInvocation(method));
+
+
+        return result.toString();
+    }
+
+    private static String generateAllMethodDeclarationFromMethodInvocation(MethodDeclaration methodDeclaration) {
+        StringBuilder result = new StringBuilder();
+        List<MethodInvocation> methodInvocations = new ArrayList<>();
+        methodDeclaration.getBody().accept(new MethodInvocationVisitor(methodInvocations));
         for (MethodInvocation methodInvocation : methodInvocations) {
-            result.append("\n").append(getInvokeAdMethodST(methodInvocation.getName().toString()));
+            MethodDeclaration newMethodDeclaration = getInvokeAdMethodST(methodInvocation.getName().toString());
+            result.append("\n").append(newMethodDeclaration);
+            result.append(generateAllMethodDeclarationFromMethodInvocation(newMethodDeclaration));
         }
-
-
         return result.toString();
     }
 
@@ -108,7 +118,7 @@ public final class TestDriverGenerator {
         throw new RuntimeException("There is no method named: " + methodName);
     }
 
-    private static String createCloneMethod(MethodDeclaration method, ASTHelper.Coverage coverage, List<MethodInvocation> methodInvocations) {
+    private static String createCloneMethod(MethodDeclaration method, ASTHelper.Coverage coverage) {
         StringBuilder cloneMethod = new StringBuilder();
 
         cloneMethod.append("public static ").append(method.getReturnType2()).append(" ").append(method.getName()).append("(");
@@ -118,8 +128,6 @@ public final class TestDriverGenerator {
             if (i != parameters.size() - 1) cloneMethod.append(", ");
         }
         cloneMethod.append(")\n");
-
-        method.getBody().accept(new MethodInvocationVisitor(methodInvocations));
 
         cloneMethod.append(generateCodeForBlock(method.getBody(), coverage)).append("\n");
 
