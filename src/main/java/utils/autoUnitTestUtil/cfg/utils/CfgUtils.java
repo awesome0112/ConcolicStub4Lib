@@ -179,8 +179,6 @@ public final class CfgUtils {
     private static ASTNode modifyMethodInvocationWithStubVars(MethodInvocation methodInvocation, boolean isChildNode) {
         String methodName = methodInvocation.getName().toString();
 
-        SymbolicExecution.addToStubVariablesOrigins(methodInvocation.toString());
-
         if (methodInvocation.getExpression() == null) { // method invocation in the same class
             MethodDeclaration methodDeclaration = getInvokedMethodAST(methodName);
             return declareStubVariable(methodName, methodDeclaration, methodInvocation, isChildNode);
