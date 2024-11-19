@@ -143,7 +143,7 @@ public class ConcolicTestingWithStub extends TestGeneration {
         if (isTestedSuccessfully) System.out.println("Tested successfully with 100% coverage");
         else System.out.println("Test fail due to UNSATISFIABLE constraint");
 
-        testResult.setFullCoverage(calculateFullTestSuiteCoverage());
+        testResult.setFullCoverage(calculateFullTestSuiteCoverage(coverage));
 
         return testResult;
     }
@@ -198,14 +198,20 @@ public class ConcolicTestingWithStub extends TestGeneration {
         TestGeneration.parameterNames = TestDriverUtils.getParameterNames(TestGeneration.parameters);
     }
 
-    private static double calculateFullTestSuiteCoverage() {
-        String key = getTotalFunctionCoverageVariableName((MethodDeclaration) testFunc, TestGeneration.Coverage.STATEMENT);
-        int totalFunctionStatement = ConcolicUploadUtil.totalStatementsInUnits.get(key);
-        int totalCovered = MarkedPath.getFullTestSuiteTotalCoveredStatements();
-        return (totalCovered * 100.0) / totalFunctionStatement;
+    private static double calculateFullTestSuiteCoverage(Coverage coverage) {
+        String key = getTotalFunctionCoverageVariableName((MethodDeclaration) testFunc, coverage);
+        if (coverage == Coverage.STATEMENT) {
+            int totalFunctionStatement = ConcolicUploadUtil.totalStatementsInUnits.get(key);
+            int totalCovered = MarkedPath.getFullTestSuiteTotalCoveredStatements();
+            return (totalCovered * 100.0) / totalFunctionStatement;
+        } else { // branch
+            int totalFunctionBranch = ConcolicUploadUtil.totalBranchesInUnits.get(key);
+            int totalCovered = MarkedPath.getFullTestSuiteTotalCoveredBranch();
+            return (totalCovered * 100.0) / totalFunctionBranch;
+        }
     }
 
-    private static double calculateRequiredCoverage(TestGeneration.Coverage coverage) {
+    private static double calculateRequiredCoverage(Coverage coverage) {
         String key = getTotalFunctionCoverageVariableName((MethodDeclaration) testFunc, coverage);
         int totalFunctionCoverage = 1;
         int totalCovered = 0;

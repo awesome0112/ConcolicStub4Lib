@@ -170,25 +170,21 @@ public final class SymbolicExecution {
                     String name = primitiveVar.toString();
 
                     if (evaluateResult instanceof IntNum) {
-                        result.append(generateAdditionalInformationForStubVariable(i, name, PrimitiveType.INT));
 
                         result.append(evaluateResult);
                     } else if (evaluateResult instanceof IntExpr) {
-                        result.append(generateAdditionalInformationForStubVariable(i, name, PrimitiveType.INT));
 
                         result.append("1");
                     } else if (evaluateResult instanceof RatNum) {
-                        result.append(generateAdditionalInformationForStubVariable(i, name, PrimitiveType.DOUBLE));
-
                         RatNum ratNum = (RatNum) evaluateResult;
-                        double value = (ratNum.getNumerator().getInt() * 1.0) / ratNum.getDenominator().getInt();
+                        IntNum numerator = ratNum.getNumerator();
+                        IntNum denominator = ratNum.getDenominator();
+                        double value = (numerator.getInt64() * 1.0) / denominator.getInt64();
                         result.append(value);
                     } else if (evaluateResult instanceof RealExpr) {
-                        result.append(generateAdditionalInformationForStubVariable(i, name, PrimitiveType.DOUBLE));
 
                         result.append("1.0");
                     } else if (evaluateResult instanceof BoolExpr) {
-                        result.append(generateAdditionalInformationForStubVariable(i, name, PrimitiveType.BOOLEAN));
 
                         BoolExpr boolExpr = (BoolExpr) evaluateResult;
                         if (!boolExpr.toString().equals("false") && !boolExpr.toString().equals("true")) {
@@ -210,12 +206,6 @@ public final class SymbolicExecution {
 
             writeDataToFile(result.toString());
         }
-    }
-
-    private String generateAdditionalInformationForStubVariable(int iterate, String name, PrimitiveType.Code type) {
-        if (iterate >= parameters.size()){
-            return type + " " + name + " ";
-        } else return "";
     }
 
     public Object[] getEvaluatedTestData(Class<?>[] parameterClasses) {
