@@ -24,7 +24,7 @@ public class ChooseToolController {
         stage = (Stage)((Node)event.getSource()).getScene().getWindow();
         scene = new Scene(root);
         stage.setResizable(false);
-        stage.setTitle("ConcolicWithStub");
+        stage.setTitle("AS4UT");
         stage.setScene(scene);
         stage.show();
     }
@@ -36,7 +36,7 @@ public class ChooseToolController {
         stage = (Stage)((Node)event.getSource()).getScene().getWindow();
         scene = new Scene(root);
         stage.setResizable(false);
-        stage.setTitle("ConcolicStub4Lib");
+        stage.setTitle("STUBLIB4UT");
         stage.setScene(scene);
         stage.show();
     }

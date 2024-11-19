@@ -19,41 +19,47 @@ writer.close();
 e.printStackTrace();
 }
 }
-public static boolean isPerfectNumber(double num)
+public static int countCharacterTypes(char input, boolean isUpperCase_call_1, boolean isLowerCase_call_2, boolean isLetter_call_3, boolean isDigit_call_4)
 {
-if (((num <= 1) && mark("num <= 1", true, false)) || mark("num <= 1", false, true))
-{
-mark("return false;\n", false, false);
-return false;
-}
-mark("int sum=1;\n", false, false);
-int sum=1;
-mark("int i=2", false, false);
-for (int i=2; ((i <= Math.sqrt(num)) && mark("i <= Math.sqrt(num)", true, false)) || mark("i <= Math.sqrt(num)", false, true); mark("i++", false, false),
-i++) {
-{
-if (((num % i == 0) && mark("num % i == 0", true, false)) || mark("num % i == 0", false, true))
+mark("int uppercaseCount=0;\n", false, false);
+int uppercaseCount=0;
+mark("int lowercaseCount=0;\n", false, false);
+int lowercaseCount=0;
+mark("int specialCount=0;\n", false, false);
+int specialCount=0;
+if (((isUpperCase_call_1) && mark("isUpperCase_call_1", true, false)) || mark("isUpperCase_call_1", false, true))
 {
 {
-mark("sum+=i;\n", false, false);
-sum+=i;
-if (((i != num / i) && mark("i != num / i", true, false)) || mark("i != num / i", false, true))
+mark("uppercaseCount++;\n", false, false);
+uppercaseCount++;
+}
+}
+else {
+if (((isLowerCase_call_2) && mark("isLowerCase_call_2", true, false)) || mark("isLowerCase_call_2", false, true))
 {
-mark("sum+=num / i;\n", false, false);
-sum+=num / i;
+{
+mark("lowercaseCount++;\n", false, false);
+lowercaseCount++;
+}
+}
+else {
+if (((!isLetter_call_3 && !isDigit_call_4) && mark("!isLetter_call_3 && !isDigit_call_4", true, false)) || mark("!isLetter_call_3 && !isDigit_call_4", false, true))
+{
+{
+mark("specialCount++;\n", false, false);
+specialCount++;
 }
 }
 }
 }
-}
-mark("return sum == num;\n", false, false);
-return sum == num;
+mark("return uppercaseCount + lowercaseCount + specialCount;\n", false, false);
+return uppercaseCount + lowercaseCount + specialCount;
 }
 
 public static void main(String[] args) {
 writeDataToFile("", "src/main/java/data/testDriverData/runTestDriverData.txt", false);
 long startRunTestTime = System.nanoTime();
-Object output = isPerfectNumber(0.0);
+Object output = countCharacterTypes('', false, false, true, false);
 long endRunTestTime = System.nanoTime();
 double runTestDuration = (endRunTestTime - startRunTestTime) / 1000000.0;
 writeDataToFile(runTestDuration + "===" + output, "src/main/java/data/testDriverData/runTestDriverData.txt", true);
