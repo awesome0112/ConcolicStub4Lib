@@ -125,6 +125,8 @@ public class ConcolicWithStubController implements Initializable {
 
     @FXML
     void chooseFileButtonClicked(MouseEvent event) {
+        filePreview.setText("Please compress project to .zip file before uploading");
+        uploadFileButton.setDisable(true);
         choseFile = fileChooser.showOpenDialog(new Stage());
         if (choseFile != null) {
             filePreview.setText(choseFile.getAbsolutePath());
@@ -166,8 +168,8 @@ public class ConcolicWithStubController implements Initializable {
         coverageChoiceBox.setValue("");
         coverageChoiceBox.setDisable(true);
         generateButton.setDisable(true);
-        resetGeneratedTestCasesInfo();
         alertLabel.setText("");
+        resetGeneratedTestCasesInfo();
         resetTestCaseDetailVBox();
     }
 

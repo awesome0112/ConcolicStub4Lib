@@ -19,47 +19,41 @@ writer.close();
 e.printStackTrace();
 }
 }
-public static int countCharacterTypes(char input, boolean isUpperCase_call_1, boolean isLowerCase_call_2, boolean isLetter_call_3, boolean isDigit_call_4)
+public static boolean isLeapYear(int year)
 {
-mark("int uppercaseCount=0;\n", false, false);
-int uppercaseCount=0;
-mark("int lowercaseCount=0;\n", false, false);
-int lowercaseCount=0;
-mark("int specialCount=0;\n", false, false);
-int specialCount=0;
-if (((isUpperCase_call_1) && mark("isUpperCase_call_1", true, false)) || mark("isUpperCase_call_1", false, true))
+if (((year % 4 == 0) && mark("year % 4 == 0", true, false)) || mark("year % 4 == 0", false, true))
 {
 {
-mark("uppercaseCount++;\n", false, false);
-uppercaseCount++;
+if (((year % 100 == 0) && mark("year % 100 == 0", true, false)) || mark("year % 100 == 0", false, true))
+{
+{
+if (((year % 400 == 0) && mark("year % 400 == 0", true, false)) || mark("year % 400 == 0", false, true))
+{
+mark("return true;\n", false, false);
+return true;
+}
+else {
+mark("return false;\n", false, false);
+return false;
+}
 }
 }
 else {
-if (((isLowerCase_call_2) && mark("isLowerCase_call_2", true, false)) || mark("isLowerCase_call_2", false, true))
 {
-{
-mark("lowercaseCount++;\n", false, false);
-lowercaseCount++;
-}
-}
-else {
-if (((!isLetter_call_3 && !isDigit_call_4) && mark("!isLetter_call_3 && !isDigit_call_4", true, false)) || mark("!isLetter_call_3 && !isDigit_call_4", false, true))
-{
-{
-mark("specialCount++;\n", false, false);
-specialCount++;
+mark("return true;\n", false, false);
+return true;
 }
 }
 }
 }
-mark("return uppercaseCount + lowercaseCount + specialCount;\n", false, false);
-return uppercaseCount + lowercaseCount + specialCount;
+mark("return false;\n", false, false);
+return false;
 }
 
 public static void main(String[] args) {
 writeDataToFile("", "src/main/java/data/testDriverData/runTestDriverData.txt", false);
 long startRunTestTime = System.nanoTime();
-Object output = countCharacterTypes('', false, false, true, false);
+Object output = isLeapYear(500);
 long endRunTestTime = System.nanoTime();
 double runTestDuration = (endRunTestTime - startRunTestTime) / 1000000.0;
 writeDataToFile(runTestDuration + "===" + output, "src/main/java/data/testDriverData/runTestDriverData.txt", true);
