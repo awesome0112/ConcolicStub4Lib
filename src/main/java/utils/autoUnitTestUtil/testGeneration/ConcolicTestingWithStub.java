@@ -106,7 +106,7 @@ public class ConcolicTestingWithStub extends TestGeneration {
             try {
                 solution.execute();
             } catch (RuntimeException e) {
-                e.printStackTrace();
+//                e.printStackTrace();
                 uncoveredNode.setFakeMarked(true); // for STATEMENT coverage
                 if (coverage == Coverage.BRANCH) {
                     CfgNode parent = uncoveredNode.getParent();
